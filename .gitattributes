@@ -1,0 +1,10 @@
+# Fim de linha explicito.
+# O git desta maquina tem core.autocrlf=true (gitconfig do sistema), que sozinho
+# converteria o plugin para CRLF em todo checkout novo. As regras abaixo mandam
+# mais que essa configuracao, entao o resultado fica igual em qualquer clone.
+
+# Codigo PHP: sempre LF na copia de trabalho.
+*.php text eol=lf
+
+# Demais textos: normaliza LF no repositorio e deixa o padrao do sistema na copia.
+* text=auto
