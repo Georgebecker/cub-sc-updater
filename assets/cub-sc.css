@@ -1,0 +1,25 @@
+/* Estilo do shortcode [cub_sc]. Carregado apenas em paginas que usam o shortcode. */
+
+.cub-sc-box {
+	margin-bottom: 1.5em;
+}
+
+.cub-sc-table {
+	width: 100%;
+	max-width: 720px;
+	border-collapse: collapse;
+}
+
+.cub-sc-table th,
+.cub-sc-table td {
+	text-align: left;
+	padding: 8px;
+}
+
+.cub-sc-table thead th {
+	border-bottom: 1px solid #ddd;
+}
+
+.cub-sc-table tbody td {
+	border-bottom: 1px solid #eee;
+}
