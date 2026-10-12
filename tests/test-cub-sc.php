@@ -269,6 +269,52 @@ foreach ( array('assets/cub-sc.css', 'assets/cub-sc-admin.js', 'uninstall.php', 
     verifica("$arquivo existe", file_exists(dirname(__DIR__) . '/' . $arquivo), true);
 }
 
+// ---------------------------------------------------------------- 9. coerencia para o wp.org
+// O revisor do wp.org recusa quando o Text Domain nao casa com o slug (pasta do zip), quando a versao
+// do cabecalho diverge do Stable tag e quando o dominio de traducao nao e texto literal (padrao WPCS).
+echo "\n[wp.org]\n";
+
+function cabecalho_de($fonte, $campo) {
+    return preg_match('/^' . preg_quote($campo, '/') . ':\s*(.+)$/mi', $fonte, $m) ? trim($m[1]) : '';
+}
+
+$fonte_plugin = file_get_contents(dirname(__DIR__) . '/cub-sc-updater.php');
+$text_domain_cabecalho = cabecalho_de($fonte_plugin, 'Text Domain');
+$versao_cabecalho = cabecalho_de($fonte_plugin, 'Version');
+$build = file_get_contents(dirname(__DIR__) . '/build.ps1');
+$slug = preg_match('/\$pasta\s*=\s*[\'"]([^\'"]+)[\'"]/', $build, $m) ? $m[1] : '';
+$readme = file_get_contents(dirname(__DIR__) . '/readme.txt');
+$stable = preg_match('/^Stable tag:\s*(\S+)/mi', $readme, $m) ? trim($m[1]) : '';
+
+verifica('cabecalho declara Text Domain', $text_domain_cabecalho, 'cub-sc-updater');
+verifica('slug do pacote igual ao Text Domain', $slug, $text_domain_cabecalho);
+verifica('const TEXT_DOMAIN igual ao cabecalho', Cub_SC_Updater::TEXT_DOMAIN, $text_domain_cabecalho);
+verifica('versao do cabecalho igual a const VERSION', $versao_cabecalho, Cub_SC_Updater::VERSION);
+verifica('Stable tag do readme igual a versao do plugin', $stable, $versao_cabecalho);
+verifica('readme tem as secoes do wp.org', (bool) preg_match('/== Description ==.*== Installation ==.*== Frequently Asked Questions ==.*== Changelog ==/s', $readme), true);
+verifica('traducao sempre com dominio literal', preg_match('/\b(?:__|_e|esc_html__|esc_html_e|esc_attr__|esc_attr_e)\((?:[^;]|\n)*?(?:\$dominio|self::TEXT_DOMAIN)/', $fonte_plugin), 0);
+
+// descricao curta = primeira linha depois do bloco de cabecalho; o wp.org limita a 150 caracteres
+$descricao_curta = '';
+foreach ( preg_split('/\r?\n/', $readme) as $indice => $linha ) {
+    $linha = trim($linha);
+    if ( 0 === $indice || '' === $linha ) {
+        continue;
+    }
+    if ( preg_match('/^[A-Za-z][A-Za-z ]*:/', $linha) ) {
+        continue; // campo do cabecalho
+    }
+    $descricao_curta = $linha;
+    break;
+}
+verifica('descricao curta presente', $descricao_curta, 'Mantém o CUB (Custo Unitário Básico) de Santa Catarina atualizado: busca no Sinduscon-Fpolis e publica em /cub-sc/ pelo shortcode [cub_sc].');
+verifica('descricao curta com ate 150 caracteres', mb_strlen($descricao_curta) <= 150, true);
+verifica('readme declara os servicos externos', false !== strpos($readme, '== External services =='), true);
+verifica('readme tem o campo Donate link', (bool) preg_match('/^Donate link:\s*https?:\/\/\S+/mi', $readme), true);
+verifica('licenca do readme igual a do cabecalho', cabecalho_de($readme, 'License'), cabecalho_de($fonte_plugin, 'License'));
+verifica('URI da licenca igual no readme e no PHP', cabecalho_de($readme, 'License URI'), cabecalho_de($fonte_plugin, 'License URI'));
+verifica('cabecalho PHP sem "Tested up to"', (bool) preg_match('/^Tested up to:/mi', $fonte_plugin), false);
+
 // ---------------------------------------------------------------- resumo
 printf("\n%d verificacoes, %d falha(s)\n", $GLOBALS['total'], $GLOBALS['falhas']);
 exit($GLOBALS['falhas'] > 0 ? 1 : 0);

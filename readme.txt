@@ -1,14 +1,15 @@
 === CUB SC Updater ===
 Contributors: georgehbecker
+Donate link: https://buymeacoffee.com/georgehbecker
 Tags: cub, sinduscon, santa catarina, construcao civil, custo unitario basico
 Requires at least: 5.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.4
+Stable tag: 1.5
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
-Busca o valor do CUB (Custo Unitário Básico) de Santa Catarina no site do Sinduscon-Fpolis, guarda o histórico e publica em /cub-sc/ pelo shortcode [cub_sc].
+Mantém o CUB (Custo Unitário Básico) de Santa Catarina atualizado: busca no Sinduscon-Fpolis e publica em /cub-sc/ pelo shortcode [cub_sc].
 
 == Description ==
 
@@ -65,7 +66,32 @@ Sim, pelo filtro `cub_sc_history_max` (padrão: 36 registros).
 A exclusão faz limpeza total: o histórico, a página `/cub-sc/` e os agendamentos são removidos.
 Desativar o plugin, por outro lado, apenas para o cron e preserva tudo.
 
+== External services ==
+
+= CUB mensal do Sinduscon-Fpolis =
+
+Este plugin consulta um serviço externo para obter o valor do CUB de Santa Catarina.
+
+* **Serviço:** página pública do CUB mensal do Sinduscon-Fpolis.
+* **Endereço:** https://sinduscon-fpolis.org.br/servico/cub-mensal/ (trocável pelo filtro `cub_sc_source_url`).
+* **O que é enviado:** uma requisição HTTP `GET` comum, com os cabeçalhos `Accept: text/html`,
+  `Accept-Language: pt-BR` e um user-agent próprio do plugin. Nenhum dado do site, do administrador ou
+  do visitante é enviado: não há cookies, autenticação nem envio de formulários.
+* **Quando:** no dia 5 de cada mês (o evento do WP-Cron só age a partir do dia 5 e enquanto faltar o mês
+  corrente) e quando o administrador usa o botão *Buscar agora*.
+* **Por que:** é a fonte pública do valor do CUB de Santa Catarina que o plugin exibe.
+* **Termos de uso e privacidade do serviço:** https://sinduscon-fpolis.org.br/politica-de-privacidade/
+
+O plugin não envia dados a nenhum outro serviço, não coleta estatísticas e não faz telemetria.
+
 == Changelog ==
+
+= 1.5 =
+* Preparação para o repositório oficial: `Text Domain` passou a ser `cub-sc-updater`, igual ao slug
+  do plugin (o WordPress casa o domínio de tradução com a pasta do plugin).
+* readme.txt: descrição curta dentro do limite de 150 caracteres, campo `Donate link` e seção
+  "External services" descrevendo a consulta ao site do Sinduscon-Fpolis.
+* Código: domínio de tradução sempre literal nas chamadas de tradução (padrão exigido pelo WordPress).
 
 = 1.4 =
 * Atualização automática passou a ser mensal: roda no dia 5, quando o CUB do mês entra em vigor.
@@ -96,6 +122,9 @@ Desativar o plugin, por outro lado, apenas para o cron e preserva tudo.
 * Primeira versão.
 
 == Upgrade Notice ==
+
+= 1.5 =
+Ajuste interno do domínio de tradução, para casar com o slug do plugin no repositório oficial.
 
 = 1.4 =
 A busca automática agora acontece no dia 5 de cada mês, em vez de todos os dias.
