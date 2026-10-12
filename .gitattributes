@@ -8,3 +8,12 @@
 
 # Demais textos: normaliza LF no repositorio e deixa o padrao do sistema na copia.
 * text=auto
+
+# --- O que NAO deve entrar no pacote distribuido (git archive / final.zip) ---
+# O zip precisa apenas do que o WordPress usa: plugin, uninstall.php, readme.txt,
+# assets/, LICENSE e (por conveniencia) o README de desenvolvimento.
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/.githooks export-ignore
+/docs export-ignore
+/tests export-ignore
