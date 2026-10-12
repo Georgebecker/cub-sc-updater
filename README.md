@@ -6,15 +6,15 @@ o plugin busca o valor no Sinduscon-Fpolis, guarda o histórico e publica em `/c
 
 > **Idioma: PT-BR, por definição.** O CUB é um índice genuinamente brasileiro (ABNT NBR 12721) e este
 > plugin cuida especificamente de Santa Catarina — não existe versão em outro idioma. A estrutura já
-> está preparada (`Text Domain: cub-sc`) e a fonte de dados é trocável, caso o plugin venha a atender
-> outros estados.
+> está preparada (`Text Domain: cub-sc-updater`, igual ao slug do plugin) e a fonte de dados é trocável,
+> caso o plugin venha a atender outros estados.
 
 | | |
 |---|---|
-| **Versão** | 1.4 |
+| **Versão** | 1.5 |
 | **Compatibilidade** | WordPress 5.3+ · PHP 7.4+ (`Tested up to: 7.1`) |
 | **Validado em produção** | <https://imoxs.com.br/cub-sc/> (PHP 8.1) |
-| **Validado na máquina do autor** | PHP 8.4.26 — lint + 59 verificações automatizadas |
+| **Validado na máquina do autor** | PHP 8.4.26 — lint + 73 verificações automatizadas |
 | **Dependências** | nenhuma (sem Composer, sem etapa de build) |
 | **Licença** | MIT |
 
@@ -104,6 +104,17 @@ Limpeza total: histórico, página `/cub-sc/` e agendamentos. Desativar apenas p
 
 ## Versões
 
+### 1.5
+- **Preparação para o repositório oficial** — o `Text Domain` passou a ser `cub-sc-updater`, igual ao
+  slug do plugin (o WordPress casa o domínio de tradução com a pasta do plugin).
+- **`readme.txt`** — descrição curta reduzida de 157 para 139 caracteres (o wp.org limita a 150),
+  `Donate link` e a seção **External services**, obrigatória porque o plugin consulta um site de terceiros.
+- **Domínio de tradução literal** — as 36 chamadas de tradução passaram a usar `'cub-sc-updater'` como
+  texto literal, como o padrão de código do WordPress exige.
+- **Testes de coerência** — 7 verificações novas travam os erros que o revisor do wp.org recusa:
+  `Text Domain` diferente do slug, versão diferente do `Stable tag`, domínio não-literal, readme sem as
+  seções obrigatórias e descrição curta fora do limite.
+
 ### 1.4
 - **Atualização mensal** — a busca automática passou a acontecer no **dia 5**, quando o CUB do mês entra
   em vigor. O evento do cron continua diário, mas `fetch_mensal()` só age a partir do dia 5 e enquanto
@@ -159,9 +170,11 @@ Limpeza total: histórico, página `/cub-sc/` e agendamentos. Desativar apenas p
   ```powershell
   php tests/test-cub-sc.php
   ```
-  São 59 verificações: parser contra o HTML real do site, histórico, falhas, travas, AJAX, agenda do
-  dia 5, assets e i18n. Os fixtures são capturas da página do Sinduscon — trocando um arquivo e rodando
-  os testes, dá para ver exatamente o que parou de ser lido se o site mudar.
+  São 73 verificações: parser contra o HTML real do site, histórico, falhas, travas, AJAX, agenda do
+  dia 5, assets, i18n e as regras do repositório oficial (Text Domain = slug, versão = `Stable tag`,
+  domínio de tradução literal, descrição curta ≤ 150 caracteres, `License`/`License URI` iguais no PHP
+  e no readme, seção de serviços externos presente). Os fixtures são capturas da página do Sinduscon —
+  trocando um arquivo e rodando os testes, dá para ver exatamente o que parou de ser lido se o site mudar.
 - **Lint** — `php -l cub-sc-updater.php` (PHP local: `C:\Users\user\tools\php\php.exe`, 8.4.26).
 - **Pacote** — `.\build.ps1` gera o `cub_sc_updater.zip` (pasta `cub-sc-updater/` na raiz, nomes de
   entrada com barra normal) e recusa empacotar com erro de sintaxe, teste quebrado, BOM ou entrada com

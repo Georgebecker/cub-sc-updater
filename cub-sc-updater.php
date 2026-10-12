@@ -2,14 +2,14 @@
 /*
 Plugin Name: CUB SC Updater
 Description: Busca o valor do CUB no site do Sinduscon-Fpolis e publica em /cub-sc/ via shortcode [cub_sc]. Atualiza no dia 5 de cada mês (ou pelo botão Buscar agora) e guarda o histórico das mudanças.
-Version: 1.4
+Version: 1.5
 Author: George H. Becker
 Author URI: https://www.linkedin.com/in/georgehbecker/
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 Requires at least: 5.3
 Requires PHP: 7.4
-Text Domain: cub-sc
+Text Domain: cub-sc-updater
 Domain Path: /languages
 */
 
@@ -17,11 +17,12 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class Cub_SC_Updater {
 
-    const VERSION = '1.4';
-    const TEXT_DOMAIN = 'cub-sc';
+    const VERSION = '1.5';
+    // igual ao slug do plugin no wp.org: o WordPress casa o text domain com a pasta do plugin
+    const TEXT_DOMAIN = 'cub-sc-updater';
     const SOURCE_URL = 'https://sinduscon-fpolis.org.br/servico/cub-mensal/';
     const HISTORY_MAX = 36;
-    const USER_AGENT = 'Cub-SC-Updater/1.4';
+    const USER_AGENT = 'Cub-SC-Updater/1.5';
     const FETCH_TIMEOUT = 20;
     const LOCK_TTL = 60;
     // o CUB do mes passa a valer por volta do dia 5: a busca automatica so age a partir dai
@@ -193,10 +194,10 @@ class Cub_SC_Updater {
             'action' => 'cub_sc_manual_fetch',
             'nonce' => wp_create_nonce('cub_sc_manual_fetch'),
             'i18n' => array(
-                'searching' => __('Buscando...', self::TEXT_DOMAIN),
-                'reloading' => __('Pronto, recarregando...', self::TEXT_DOMAIN),
-                'errorPrefix' => __('Erro:', self::TEXT_DOMAIN),
-                'networkError' => __('Erro de rede.', self::TEXT_DOMAIN),
+                'searching' => __('Buscando...', 'cub-sc-updater'),
+                'reloading' => __('Pronto, recarregando...', 'cub-sc-updater'),
+                'errorPrefix' => __('Erro:', 'cub-sc-updater'),
+                'networkError' => __('Erro de rede.', 'cub-sc-updater'),
             ),
         )) . ';', 'before');
     }
@@ -209,29 +210,28 @@ class Cub_SC_Updater {
         }
         $history = ( isset($data['history']) && is_array($data['history']) ) ? $data['history'] : array();
         $erro = isset($data['last_error']) ? (string) $data['last_error'] : '';
-        $dominio = self::TEXT_DOMAIN;
         ?>
         <div class="wrap">
-            <h1><?php esc_html_e('CUB SC Updater', $dominio); ?></h1>
+            <h1><?php esc_html_e('CUB SC Updater', 'cub-sc-updater'); ?></h1>
             <p>
-                <?php esc_html_e('Última tentativa:', $dominio); ?>
-                <strong><?php echo esc_html(self::data_hora(isset($data['last_attempt']) ? $data['last_attempt'] : 0) ?: __('Nunca', $dominio)); ?></strong>
+                <?php esc_html_e('Última tentativa:', 'cub-sc-updater'); ?>
+                <strong><?php echo esc_html(self::data_hora(isset($data['last_attempt']) ? $data['last_attempt'] : 0) ?: __('Nunca', 'cub-sc-updater')); ?></strong>
                 &nbsp;|&nbsp;
-                <?php esc_html_e('Última atualização:', $dominio); ?>
-                <strong><?php echo esc_html(self::data_hora(isset($data['last_checked']) ? $data['last_checked'] : 0) ?: __('Nunca', $dominio)); ?></strong>
+                <?php esc_html_e('Última atualização:', 'cub-sc-updater'); ?>
+                <strong><?php echo esc_html(self::data_hora(isset($data['last_checked']) ? $data['last_checked'] : 0) ?: __('Nunca', 'cub-sc-updater')); ?></strong>
             </p>
             <?php if ( '' !== $erro ) : ?>
-                <div class="notice notice-error inline"><p><strong><?php esc_html_e('A última busca falhou:', $dominio); ?></strong> <?php echo esc_html($erro); ?></p></div>
+                <div class="notice notice-error inline"><p><strong><?php esc_html_e('A última busca falhou:', 'cub-sc-updater'); ?></strong> <?php echo esc_html($erro); ?></p></div>
             <?php endif; ?>
-            <p><button id="cub-sc-fetch" class="button button-primary"><?php esc_html_e('Buscar agora', $dominio); ?></button> <span id="cub-sc-status"></span></p>
-            <h2><?php esc_html_e('Últimos registros', $dominio); ?></h2>
+            <p><button id="cub-sc-fetch" class="button button-primary"><?php esc_html_e('Buscar agora', 'cub-sc-updater'); ?></button> <span id="cub-sc-status"></span></p>
+            <h2><?php esc_html_e('Últimos registros', 'cub-sc-updater'); ?></h2>
             <table class="widefat">
                 <thead><tr>
-                    <th><?php esc_html_e('Data', $dominio); ?></th>
-                    <th><?php esc_html_e('Referência', $dominio); ?></th>
-                    <th><?php esc_html_e('Uso', $dominio); ?></th>
-                    <th><?php esc_html_e('Residencial', $dominio); ?></th>
-                    <th><?php esc_html_e('Comercial', $dominio); ?></th>
+                    <th><?php esc_html_e('Data', 'cub-sc-updater'); ?></th>
+                    <th><?php esc_html_e('Referência', 'cub-sc-updater'); ?></th>
+                    <th><?php esc_html_e('Uso', 'cub-sc-updater'); ?></th>
+                    <th><?php esc_html_e('Residencial', 'cub-sc-updater'); ?></th>
+                    <th><?php esc_html_e('Comercial', 'cub-sc-updater'); ?></th>
                 </tr></thead>
                 <tbody>
                 <?php
@@ -247,7 +247,7 @@ class Cub_SC_Updater {
                             . '<td>'.esc_html(self::exibir_preco(self::campo($row, 'commercial'))).'</td></tr>';
                     }
                 } else {
-                    echo '<tr><td colspan="5">'.esc_html__('Nenhum registro', $dominio).'</td></tr>';
+                    echo '<tr><td colspan="5">'.esc_html__('Nenhum registro', 'cub-sc-updater').'</td></tr>';
                 }
                 ?>
                 </tbody>
@@ -421,7 +421,7 @@ class Cub_SC_Updater {
 
     public static function fetch_and_store() {
         if ( get_transient(self::$lock_key) ) {
-            return new WP_Error('cub_sc_locked', __('Já existe uma busca em andamento.', self::TEXT_DOMAIN));
+            return new WP_Error('cub_sc_locked', __('Já existe uma busca em andamento.', 'cub-sc-updater'));
         }
         set_transient(self::$lock_key, 1, self::LOCK_TTL);
 
@@ -443,20 +443,20 @@ class Cub_SC_Updater {
             ));
 
             if ( is_wp_error($response) ) {
-                return self::registrar_falha($data, sprintf(__('falha de conexão: %s', self::TEXT_DOMAIN), $response->get_error_message()));
+                return self::registrar_falha($data, sprintf(__('falha de conexão: %s', 'cub-sc-updater'), $response->get_error_message()));
             }
             $codigo = (int) wp_remote_retrieve_response_code($response);
             if ( 200 !== $codigo ) {
-                return self::registrar_falha($data, sprintf(__('o site respondeu HTTP %d', self::TEXT_DOMAIN), $codigo));
+                return self::registrar_falha($data, sprintf(__('o site respondeu HTTP %d', 'cub-sc-updater'), $codigo));
             }
             $corpo = (string) wp_remote_retrieve_body($response);
             if ( '' === trim($corpo) ) {
-                return self::registrar_falha($data, __('o site respondeu vazio', self::TEXT_DOMAIN));
+                return self::registrar_falha($data, __('o site respondeu vazio', 'cub-sc-updater'));
             }
 
             $parsed = self::parse_html_for_cub($corpo, self::charset_do_cabecalho($response));
             if ( '' === $parsed['residential'] && '' === $parsed['commercial'] ) {
-                return self::registrar_falha($data, __('não encontrei os valores na página (o layout do site mudou?)', self::TEXT_DOMAIN));
+                return self::registrar_falha($data, __('não encontrei os valores na página (o layout do site mudou?)', 'cub-sc-updater'));
             }
 
             $linha = array(
@@ -525,13 +525,13 @@ class Cub_SC_Updater {
     public static function ajax_manual_fetch() {
         check_ajax_referer('cub_sc_manual_fetch', 'nonce');
         if ( ! current_user_can('manage_options') ) {
-            wp_send_json_error(array('message' => __('Sem permissão para atualizar.', self::TEXT_DOMAIN)), 403);
+            wp_send_json_error(array('message' => __('Sem permissão para atualizar.', 'cub-sc-updater')), 403);
         }
         $resultado = self::fetch_and_store();
         if ( is_wp_error($resultado) ) {
             wp_send_json_error(array('message' => $resultado->get_error_message()), 500);
         }
-        wp_send_json_success(array('message' => __('Atualizado.', self::TEXT_DOMAIN), 'latest' => self::get_latest()));
+        wp_send_json_success(array('message' => __('Atualizado.', 'cub-sc-updater'), 'latest' => self::get_latest()));
     }
 
     public static function get_latest() {
@@ -568,37 +568,36 @@ class Cub_SC_Updater {
         $latest = self::get_latest();
         $data = get_option(self::$option_key, array());
         $history = ( isset($data['history']) && is_array($data['history']) ) ? $data['history'] : array();
-        $dominio = self::TEXT_DOMAIN;
 
         ob_start();
         if ( $latest ) {
             $referencia = self::campo($latest, 'reference');
             $use_for = self::campo($latest, 'use_for');
             echo '<div class="cub-sc-box">';
-            echo '<h2>'.esc_html__('CUB - Santa Catarina', $dominio).'</h2>';
+            echo '<h2>'.esc_html__('CUB - Santa Catarina', 'cub-sc-updater').'</h2>';
             if ( '' !== $referencia ) {
-                echo '<p><strong>'.esc_html__('Mês de referência:', $dominio).'</strong> '.esc_html($referencia).'</p>';
+                echo '<p><strong>'.esc_html__('Mês de referência:', 'cub-sc-updater').'</strong> '.esc_html($referencia).'</p>';
             }
             if ( '' !== $use_for ) {
-                echo '<p><strong>'.esc_html__('Para ser usado em:', $dominio).'</strong> '.esc_html($use_for).'</p>';
+                echo '<p><strong>'.esc_html__('Para ser usado em:', 'cub-sc-updater').'</strong> '.esc_html($use_for).'</p>';
             }
             echo '<table class="cub-sc-table">';
-            echo '<thead><tr><th>'.esc_html__('Tipo', $dominio).'</th><th>'.esc_html__('Valor', $dominio).'</th></tr></thead>';
+            echo '<thead><tr><th>'.esc_html__('Tipo', 'cub-sc-updater').'</th><th>'.esc_html__('Valor', 'cub-sc-updater').'</th></tr></thead>';
             echo '<tbody>';
-            echo '<tr><td>'.esc_html__('Residencial', $dominio).'</td><td>'.esc_html(self::exibir_preco(self::campo($latest, 'residential'))).'</td></tr>';
-            echo '<tr><td>'.esc_html__('Comercial', $dominio).'</td><td>'.esc_html(self::exibir_preco(self::campo($latest, 'commercial'))).'</td></tr>';
+            echo '<tr><td>'.esc_html__('Residencial', 'cub-sc-updater').'</td><td>'.esc_html(self::exibir_preco(self::campo($latest, 'residential'))).'</td></tr>';
+            echo '<tr><td>'.esc_html__('Comercial', 'cub-sc-updater').'</td><td>'.esc_html(self::exibir_preco(self::campo($latest, 'commercial'))).'</td></tr>';
             echo '</tbody></table>';
-            echo '<p><small>'.sprintf(esc_html__('Atualizado em %s', $dominio), esc_html(self::data_hora(self::campo($latest, 'time')))).'</small></p>';
+            echo '<p><small>'.sprintf(esc_html__('Atualizado em %s', 'cub-sc-updater'), esc_html(self::data_hora(self::campo($latest, 'time')))).'</small></p>';
             echo '</div>';
         } else {
             echo '<p>'.sprintf(
-                esc_html__('Dados do CUB ainda não disponíveis. Clique em %s (requer login).', $dominio),
-                '<a href="'.esc_url(admin_url('admin.php?page=cub-sc-updater')).'">'.esc_html__('Buscar agora', $dominio).'</a>'
+                esc_html__('Dados do CUB ainda não disponíveis. Clique em %s (requer login).', 'cub-sc-updater'),
+                '<a href="'.esc_url(admin_url('admin.php?page=cub-sc-updater')).'">'.esc_html__('Buscar agora', 'cub-sc-updater').'</a>'
             ).'</p>';
         }
 
         if ( $history ) {
-            echo '<h3>'.esc_html__('Histórico', $dominio).'</h3>';
+            echo '<h3>'.esc_html__('Histórico', 'cub-sc-updater').'</h3>';
             echo '<ul>';
             foreach ( $history as $row ) {
                 if ( ! is_array($row) ) {
