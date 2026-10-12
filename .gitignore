@@ -1,0 +1,35 @@
+# ---- Ambiente e segredos ----
+# .env NUNCA pode ir para o git (regra de ouro): guarda chaves, senhas e caminhos.
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+*.pem
+*.key
+
+# ---- Saídas e logs ----
+saidas/
+logs/
+*.log
+
+# ---- Artefatos de build/distribuição ----
+dist/
+build/
+*.zip
+
+# ---- Dependências ----
+vendor/
+node_modules/
+
+# ---- Ferramentas PHP ----
+.phpcs-cache
+.php-cs-fixer.cache
+.phpunit.result.cache
+
+# ---- IDE / SO ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
