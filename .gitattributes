@@ -17,3 +17,4 @@
 /.githooks export-ignore
 /docs export-ignore
 /tests export-ignore
+.githooks/* text eol=lf
